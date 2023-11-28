@@ -5,7 +5,8 @@ using UnityEngine;
 public class StickingToSurface : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private MeshCollider myCollider;
+    [SerializeField] private Collider myCollider;
+    [SerializeField] private FixedJoint fj;
     [SerializeField] private GameObject stickingFood;
     [SerializeField] private string foodTag = "food";
 
@@ -13,17 +14,11 @@ public class StickingToSurface : MonoBehaviour
     {
         if (collision.gameObject.tag == foodTag) 
         {
-            rb.isKinematic = true;
-            myCollider.isTrigger = true;
-
             GameObject food = (GameObject)Instantiate(stickingFood);
-            food.transform.position = transform.position;
-            food.transform.forward = transform.forward;
-
-            if (collision.collider.attachedRigidbody != null)
-            {
-                food.transform.parent = collision.collider.attachedRigidbody.transform;
-            }
+            
+            food.transform.parent = collision.collider.attachedRigidbody.transform;
+            fj = food.AddComponent<FixedJoint>();
+            fj.connectedBody = collision.collider.GetComponent<Rigidbody>();
 
             Destroy(gameObject);
         }
