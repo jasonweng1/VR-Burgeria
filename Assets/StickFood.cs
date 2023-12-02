@@ -1,20 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StickingToSurface : MonoBehaviour
+public class StickFood : MonoBehaviour
 {
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private Collider myCollider;
-    [SerializeField] private FixedJoint fj;
     [SerializeField] private GameObject stickingFood;
     [SerializeField] private string foodTag = "food";
+    private FixedJoint fj;
+    private bool dropped = false;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == foodTag) 
+        if (dropped && collision.gameObject.tag == foodTag)
         {
-            GameObject food = (GameObject)Instantiate(stickingFood);
+            GameObject food = Instantiate(stickingFood);
             
             food.transform.parent = collision.collider.attachedRigidbody.transform;
             fj = food.AddComponent<FixedJoint>();
@@ -23,5 +23,14 @@ public class StickingToSurface : MonoBehaviour
             Destroy(gameObject);
         }
 
+        if (dropped && collision.gameObject.tag != foodTag)
+        {
+            dropped = false;
+        }
+    }
+
+    public void EnableDropped()
+    {
+        dropped = true;
     }
 }
