@@ -5,26 +5,28 @@ using UnityEngine;
 
 public class StickFood : MonoBehaviour
 {
-    [SerializeField] private GameObject stickingFood;
     [SerializeField] private string foodTag = "food";
-    private FixedJoint fj;
+    [SerializeField] private FixedJoint fj;
+    [SerializeField] private Rigidbody targetFood;
     private bool dropped = false;
 
-    private void OnCollisionEnter(Collision collision)
+    private IEnumerator OnCollisionEnter(Collision collision)
     {
-        if (dropped && collision.gameObject.tag == foodTag)
+        Debug.Log("collision");
+        if (dropped && collision.gameObject.CompareTag(foodTag))
         {
-            GameObject food = Instantiate(stickingFood);
-            
-            food.transform.parent = collision.collider.attachedRigidbody.transform;
-            fj = food.AddComponent<FixedJoint>();
-            fj.connectedBody = collision.collider.GetComponent<Rigidbody>();
-
-            Destroy(gameObject);
+            Debug.Log("Stick");
+            transform.parent = collision.collider.attachedRigidbody.transform;
+            targetFood = collision.collider.GetComponent<Rigidbody>();
+            yield return new WaitForSeconds(0.3f);
+            fj = gameObject.AddComponent<FixedJoint>();
+            fj.connectedBody = targetFood;
+            dropped = false;
         }
 
-        if (dropped && collision.gameObject.tag != foodTag)
+        if (dropped && !collision.gameObject.CompareTag(foodTag))
         {
+            Debug.Log("No Stick");
             dropped = false;
         }
     }
