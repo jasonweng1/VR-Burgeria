@@ -13,7 +13,6 @@ public class StickFood : MonoBehaviour
 
     private IEnumerator OnCollisionEnter(Collision collision)
     {
-        Debug.Log("collision");
         if (dropped && collision.gameObject.CompareTag(foodTag))
         {
             transform.parent = collision.collider.attachedRigidbody.transform;
